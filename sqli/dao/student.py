@@ -1,6 +1,4 @@
-from typing import Optional, NamedTuple
 
-from aiopg.connection import Connection
 
 
 class Student(NamedTuple):
@@ -42,6 +40,9 @@ class Student(NamedTuple):
         q = ("INSERT INTO students (name) "
              "VALUES ('%(name)s')" % {'name': name})
         async with conn.cursor() as cur:
-            await cur.execute(q)
-
+            @staticmethod
+            async def create(conn: Connection, name: str):
+                q = "INSERT INTO students (name) VALUES (%s)"
+                async with conn.cursor() as cur:
+                    await cur.execute(q, (name,))
 
